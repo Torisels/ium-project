@@ -1,0 +1,44 @@
+[
+  {
+    "id": 1,
+    "type": "online",
+    "name": "ab",
+    "models": [
+      "basic",
+      "advanced"
+    ],
+    "user_sets": {
+      "basic": [
+        1,
+        2,
+        3
+      ],
+      "advanced": [
+        4,
+        5,
+        6
+      ]
+    }
+  },
+  {
+    "id": 2,
+    "type": "offline",
+    "name": "ab",
+    "models": [
+      "basic",
+      "advanced"
+    ],
+    "user_sets": {
+      "basic": [
+        1,
+        2,
+        3
+      ],
+      "advanced": [
+        4,
+        5,
+        6
+      ]
+    }
+  }
+]
