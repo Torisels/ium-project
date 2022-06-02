@@ -1,0 +1,7 @@
+data_folder_path = "data"
+version_file_path = "version.txt"
+users_data_file = "users.jsonl"
+model_data_path = "model_data"
+products_data_file = "products.jsonl"
+sessions_data_file = "sessions.jsonl"
+basic_model_recommendations = 5
