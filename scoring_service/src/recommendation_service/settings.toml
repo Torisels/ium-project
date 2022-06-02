@@ -1,0 +1,4 @@
+data_folder_path = "data"
+version_file_path = "version.txt"
+users_data_file = "users.jsonl"
+products_data_file = "products.jsonl"
