@@ -5,11 +5,14 @@ from recommendation_service.response_models.recommendation_model_response import
 from recommendation_service.services.users_service import UsersService
 from recommendation_service.services.models_service import ModelsService
 from recommendation_service.services.product_service import ProductsService
+from recommendation_service.services.experiments_service import ExperimentsService
 from recommendation_service.utils import get_api_version
 from recommendation_service.config import settings
+from recommendation_service.request_models.event_request import EventRequest
 
 
-def build_app(users_service: UsersService, models_service: ModelsService, product_service: ProductsService) -> FastAPI:
+def build_app(users_service: UsersService, models_service: ModelsService, product_service: ProductsService,
+              experiments_service: ExperimentsService) -> FastAPI:
     app = FastAPI()
     api_version = get_api_version(settings.version_file_path)
 
@@ -43,7 +46,7 @@ def build_app(users_service: UsersService, models_service: ModelsService, produc
 
         return product_service.products_from_ids(recommendations)
 
-    @app.get("/api/experiments/ab/{model_a}/{model_b}/", response_model=List[ProductResponse])
+    @app.get("/api/experiments/{experiment_id}/offline/results", response_model=List[ProductResponse])
     async def experiment(model_id: str, user_id: int = 0):
         m = models.get(model_id, None)
         if m is None:
@@ -57,5 +60,33 @@ def build_app(users_service: UsersService, models_service: ModelsService, produc
                                 category_path="Cat path",
                                 rating=5.77,
                                 rating_count=123)]
+
+    @app.get("/api/experiments/{experiment_id}/recommend", response_model=List[ProductResponse])
+    async def recommend_from_experiment(model_id: str, user_id: int = 0):
+        m = models.get(model_id, None)
+        if m is None:
+            raise HTTPException(status_code=404, detail="Model not found")
+
+        if not user_exists(user_id, users):
+            raise HTTPException(status_code=404, detail="User does not exist in database")
+
+        return [ProductResponse(name="Name",
+                                description="Opis",
+                                category_path="Cat path",
+                                rating=5.77,
+                                rating_count=123)]
+
+    @app.get("/api/experiments", response_model=List[ProductResponse])
+    async def recommend_from_experiment():
+
+        return [ProductResponse(name="Name",
+                                description="Opis",
+                                category_path="Cat path",
+                                rating=5.77,
+                                rating_count=123)]
+
+    @app.post("/api/log/viewed")
+    async def register_event(event: EventRequest):
+        return event
 
     return app
