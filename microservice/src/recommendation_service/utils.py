@@ -22,7 +22,7 @@ def load_users():
 
 
 def get_folder_path(relative_path: str) -> Path:
-    if not settings.exists("root_path") or "RUNNING_REMOTE" not in os.environ:
+    if not settings.exists("root_path") or not settings.exists("running_remote"):
         return (Path(sys.argv[0]).parent / relative_path).resolve()
     return Path(settings.root_path) / Path(relative_path)
 

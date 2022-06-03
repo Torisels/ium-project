@@ -13,5 +13,5 @@ WORKDIR /app/src
 ENV PYTHONPATH "${PYTHONPATH}:/app/src"
 
 EXPOSE 80
-ENV RUNNING_REMOTE "True"
+ENV MS_RUNNING_REMOTE "True"
 CMD [ "uvicorn", "--host" , "0.0.0.0", "--port", "80","recommendation_service.app:app"]
