@@ -7,3 +7,4 @@ sessions_data_file = "sessions.jsonl"
 experiments_data_path = "experiments_data"
 current_experiment_id = 1
 basic_model_recommendations = 5
+advanced_model_recommendations = 5
