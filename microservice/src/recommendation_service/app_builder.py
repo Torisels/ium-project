@@ -18,10 +18,6 @@ def build_app(users_service: UsersService, models_service: ModelsService, produc
     app = FastAPI()
     api_version = get_api_version(settings.version_file_path)
 
-    @app.get("/")
-    def status():
-        return {"project_description": "IUM Recommendation Model"}
-
     @app.get("/health")
     def status():
         return {"status": "healthy"}

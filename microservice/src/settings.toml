@@ -5,6 +5,7 @@ model_data_path = "model_data"
 products_data_file = "products.jsonl"
 sessions_data_file = "sessions.jsonl"
 experiments_data_path = "experiments_data"
+root_path = "/app/src/recommendation_service"
 current_experiment_id = 1
 basic_model_recommendations = 5
 advanced_model_recommendations = 5
