@@ -8,7 +8,7 @@ from recommendation_service.services.experiments_service import ExperimentsServi
 users_service = UsersService()
 models_service = ModelsService()
 product_service = ProductsService()
-experiments_service = ExperimentsService()
+experiments_service = ExperimentsService(models_service)
 app = build_app(users_service, models_service, product_service, experiments_service)
 
 if __name__ == "__main__":

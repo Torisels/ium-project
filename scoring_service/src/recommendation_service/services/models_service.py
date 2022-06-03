@@ -18,3 +18,6 @@ class ModelsService:
 
     def recommend(self, model_id: str, user_id: int) -> List[int]:
         return self.models[model_id].recommend(user_id)
+
+    def offline_results(self, model_id: str, users: List[int]):
+        return self.models[model_id].calculate_offline_accuracy(users)

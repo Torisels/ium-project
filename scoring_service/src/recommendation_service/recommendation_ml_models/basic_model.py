@@ -16,9 +16,27 @@ class BasicRecommendationModel(BaseModel):
         self.users_views = self._get_users_views()
         self.model = self._load_model()
         self.k = settings.basic_model_recommendations
+        self.train_data = pd.read_pickle(
+            get_folder_path(settings.model_data_path) / self.name / f"train_data_{self.name}.pickle")
+
+        self.test_data = pd.read_pickle(
+            get_folder_path(settings.model_data_path) / self.name / f"test_data_{self.name}.pickle")
 
     def recommend(self, user_id: int) -> List[int]:
-        return self._get_recommendations(user_id)
+        return self._get_recommendations(user_id, self.users_views)
+
+    def calculate_offline_accuracy(self, user_ids: List[int]) -> float:
+        correct = 0
+        for user in user_ids:
+            recommendations = self._get_recommendations(user, self.train_data)
+            for recommendation in recommendations:
+                view = self.test_data.loc[
+                    (self.test_data['product_id'] == recommendation) & (self.test_data['user_id'] == user)]['view']
+                if view.any():
+                    correct += 1
+
+        result = correct / (self.k * len(user_ids))
+        return result
 
     def _load_products(self):
         return pd.read_pickle(get_folder_path(settings.model_data_path) / self.name / f"products_{self.name}.pickle")
@@ -37,16 +55,17 @@ class BasicRecommendationModel(BaseModel):
         ret_product = self.products.loc[self.products["product_id"] == product_id]
         return ret_product.drop(columns="product_id")
 
-    def _get_recommendations(self, user_id):
-        most_viewed = self.users_views.loc[self.users_views["user_id"] == user_id].sort_values(by=["view"],
-                                                                                               ascending=False)
+    def _get_recommendations(self, user_id, users_views):
+        most_viewed = users_views.loc[users_views["user_id"] == user_id].sort_values(by=["view"], ascending=False)
         viewed_products = list(most_viewed["product_id"])
-        final_recommendation = []
+        final_reccomendation = []
         for product in viewed_products:
-            distances, recommended = self.model.kneighbors(self._get_product_params(product), n_neighbors=self.k)
+            recommended = self.model.kneighbors(self._get_product_params(product), n_neighbors=self.k,
+                                                return_distance=False)
             for recommended_product in recommended[0]:
                 recommended_product_id = self.products.iloc[[recommended_product]]['product_id']
-                if int(recommended_product_id) not in viewed_products:
-                    final_recommendation.append(int(recommended_product_id))
-                if len(final_recommendation) == self.k:
-                    return final_recommendation
+                pid = int(recommended_product_id)
+                if pid not in viewed_products and pid not in final_reccomendation:
+                    final_reccomendation.append(int(recommended_product_id))
+                if len(final_reccomendation) == self.k:
+                    return final_reccomendation
